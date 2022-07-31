@@ -36,3 +36,12 @@
     transform: rotate(360deg);
   }
 }
+
+.col-md-4 {
+  display: flex;
+  min-height: 100%;
+}
+
+.btn-primary {
+  width: fit-content;
+}
