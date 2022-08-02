@@ -20,9 +20,11 @@ const News = (props)=> {
     const loadNews = async ()=> {
         let url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.apiKey}&page=${page}&pageSize=${props.pageSize}`;
         setLoading(true);
+        props.setProgress(10)
         let newsData = await fetch(url);
         let parsedNewsData = await newsData.json();
         let status = parsedNewsData.status;
+        props.setProgress(60)
         if (status === "ok") {
             setArticles(parsedNewsData.articles);
             setTotalResults(parsedNewsData.totalResults);
@@ -31,13 +33,13 @@ const News = (props)=> {
             setErrorCode(parsedNewsData.code);
             setLoading(false);
         }
+        props.setProgress(100)
       }
     
   useEffect(() => {
+    document.title = `NewsMurphy - ${capitalizeFirstLetter(props.category)}`;
     loadNews();
-    document.title = `NewsMurphy - ${capitalizeFirstLetter(
-        props.category
-    )}`;
+    // eslint-disable-next-line
   }, [])
   
   const fetchNewsData = async () => {
@@ -56,8 +58,8 @@ const News = (props)=> {
   };
   
     return (
-      <div className="container my-3">
-        <h1 className="text-center my-4">
+      <>
+        <h1 className="text-center my-4 mt-5 pt-4">
           Today's Top Headlines -{" "}
           {capitalizeFirstLetter(props.category)}
         </h1>
@@ -93,7 +95,7 @@ const News = (props)=> {
           </div>
           </div>
         </InfiniteScroll>
-      </div>
+      </>
     );
 }
 

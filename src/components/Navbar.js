@@ -1,10 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
+// import LoadingBar from 'react-top-loading-bar'
 
 export default function Navbar() {
+  // const [progress,setProgress] = useState(0);
     return (
       <div>
-        <nav className="navbar navbar-dark navbar-expand-lg bg-dark">
+        <nav className="navbar fixed-top navbar-dark navbar-expand-lg bg-dark">
           <div className="container-fluid">
             <Link className="navbar-brand" to="/">
               News Murphy
@@ -63,6 +65,7 @@ export default function Navbar() {
               </ul>
             </div>
           </div>
+          
         </nav>
       </div>
     );
