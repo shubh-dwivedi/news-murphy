@@ -1,9 +1,12 @@
-import React from "react";
-import { Link } from "react-router-dom";
-// import LoadingBar from 'react-top-loading-bar'
+import React, {useEffect} from "react";
+import { Link, useLocation } from "react-router-dom";
 
 export default function Navbar() {
-  // const [progress,setProgress] = useState(0);
+  let location = useLocation();
+
+  useEffect(() => {
+  //  console.log(location.pathname);
+  }, [location]);
     return (
       <div>
         <nav className="navbar fixed-top navbar-dark navbar-expand-lg bg-dark">
@@ -28,37 +31,37 @@ export default function Navbar() {
             >
               <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                 <li className="nav-item">
-                  <Link className="nav-link active" aria-current="page" to="/">
+                  <Link className={`nav-link ${location.pathname === "/"? "active border-bottom border-2": ""}`} aria-current="page" to="/">
                     Home
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" to="/business">
+                  <Link className={`nav-link ${location.pathname === "/business"? "active border-bottom border-2": ""}`} to="/business">
                     Business
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" to="/health">
+                  <Link className={`nav-link ${location.pathname === "/health"? "active border-bottom border-2": ""}`} to="/health">
                     Health
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" to="/entertainment">
+                  <Link className={`nav-link ${location.pathname === "/entertainment"? "active border-bottom border-2": ""}`} to="/entertainment">
                     Entertainment
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" to="/sports">
+                  <Link className={`nav-link ${location.pathname === "/sports"? "active border-bottom border-2": ""}`} to="/sports">
                     Sports
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" to="/science">
+                  <Link className={`nav-link ${location.pathname === "/science"? "active border-bottom border-2": ""}`} to="/science">
                     Science
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" to="/technology">
+                  <Link className={`nav-link ${location.pathname === "/technology"? "active border-bottom border-2": ""}`} to="/technology">
                     Technology
                   </Link>
                 </li>

@@ -44,7 +44,7 @@ const News = (props)=> {
   
   const fetchNewsData = async () => {
     var arrayNews;
-    const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.apiKey}&page=1&pageSize=${totalResults}`;
+    const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.apiKey}&page=1&pageSize=${totalResults<=100 ? totalResults :100}`;
     let newsData = await fetch(url);
     let parsedNewsData = await newsData.json();
     arrayNews = parsedNewsData.articles;
