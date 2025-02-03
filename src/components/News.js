@@ -16,26 +16,58 @@ const News = (props)=> {
     return str.charAt(0).toUpperCase() + str.slice(1);
   };
 
-    
-    const loadNews = async ()=> {
-        let url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=hidden&page=${page}&pageSize=${props.pageSize}`;
-        let urlNew = `${process.env.REACT_APP_NEWS_URL}/translate/fetchnews?text=${url}`
-        setLoading(true);
-        props.setProgress(10)
-        let newsData = await fetch(urlNew);
-        let parsedNewsData = await newsData.json();
-        let status = parsedNewsData.status;
-        props.setProgress(60)
-        if (status === "ok") {
-            setArticles(parsedNewsData.articles);
-            setTotalResults(parsedNewsData.totalResults);
-            setLoading(false);
+  const loadNews = async ()=> {
+    // let url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=hidden&page=${page}&pageSize=${props.pageSize}`;
+    let url = `https://newsapi.org/v2/top-headlines?`;
+    url += props.country ? `&country=${props.country}`:'';
+    url += props.category ? `&category=${props.category}`:'';
+    url += `&apiKey=hidden&page=${page}&pageSize=${props.pageSize}`;
+
+    let urlNew = `${process.env.REACT_APP_NEWS_URL}/translate/fetchnews?text=${url}`
+
+    setLoading(true);
+    props.setProgress(10)
+    let newsData = await fetch(urlNew);
+    let parsedNewsData = await newsData.json();
+    let status = parsedNewsData.status;
+    props.setProgress(60)
+    if (status === "ok") {
+        setArticles(parsedNewsData.articles);
+        setTotalResults(parsedNewsData.totalResults);
+        setLoading(false);
+    } else {
+        setErrorCode(parsedNewsData.code);
+        setLoading(false);
+    }
+    props.setProgress(100)
+  }
+
+  const getEndMessage = () => {
+    // errorCode==="" 
+    // ? !loading && 
+    // (articles.length > 0 ? <p className="my-3" style={{ textAlign: 'center' }}>
+    //   <b>Yay! You have read all the news in {capitalizeFirstLetter(props.category)} category</b>
+    // </p> : <p></p>)
+    // : errorCode === "" && <h4 className="text-center pt-5">Something went wrong 😰 Please try again later...</h4>
+
+    if(errorCode==="" ) {
+      if(!loading) {
+        if(articles.length > 0) {
+          return (
+            <p className="my-3" style={{ textAlign: 'center' }}>
+              <b>Yay! You have read all the news in {capitalizeFirstLetter(props.category)} category</b>
+            </p>
+          )
         } else {
-            setErrorCode(parsedNewsData.code);
-            setLoading(false);
+          return <p className="my-3" style={{ textAlign: 'center' }}>
+          <b>No News found in {capitalizeFirstLetter(props.category)} category</b>
+        </p>
         }
-        props.setProgress(100)
       }
+    } else {
+      return <h4 className="text-center pt-5">Something went wrong 😰 Please try again later...</h4>
+    }
+  }
     
   useEffect(() => {
     document.title = `NewsMurphy - ${capitalizeFirstLetter(props.category)}`;
@@ -71,10 +103,7 @@ const News = (props)=> {
           next={fetchNewsData}
           hasMore={articles.length !== totalResults}
           loader={<Spinner />}
-          endMessage={
-            errorCode==="" ? !loading && <p className="my-3" style={{ textAlign: 'center' }}>
-              <b>Yay! You have read all the news in {capitalizeFirstLetter(props.category)} category</b>
-            </p>:errorCode === "" && <h4 className="text-center pt-5">Something went wrong 😰 Please try again later...</h4>}
+          endMessage={getEndMessage()}
         >
           <div className="container">
           <div className="row">

@@ -1,5 +1,6 @@
 import React from 'react'
 import imagePlaceholder from './placeholderImage.jpg'
+import moment from 'moment';
 
 const NewsItem = (props)=> {
     let {title,description, imageUrl, newsUrl, author, date, sourceName} = props;
@@ -11,7 +12,8 @@ const NewsItem = (props)=> {
         <div className="card-body d-flex flex-column">
             <a href={newsUrl} target='_blank' rel="noreferrer" className='text-decoration-none text-dark'><h5 className="card-title">{title}</h5></a>
             <p className="card-text">{description?description:"Desccription is not available. For reading more about this news please click on Read more"}</p>
-            <p className="card-text"><i><small className="text-muted">by {author} on {new Date(date).toUTCString()}</small></i></p>
+            {/* <p className="card-text"><i><small className="text-muted">by {author} on {new Date(date).toUTCString()}</small></i></p> */}
+            <p className="card-text"><i><small className="text-muted">by {author} on {moment(new Date(date)).format('DD MMM YYYY hh:mm A')}</small></i></p>
             <a href={newsUrl} className="btn btn-primary mt-auto" target='_blank' rel="noreferrer">Read more...</a>
         </div>
         </div>
