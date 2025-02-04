@@ -42,8 +42,15 @@
   min-height: 100%;
 }
 
-
+.nav-item {
+  border-bottom: transparent;
+}
 
 .btn-primary {
   width: fit-content;
+}
+
+.nav-item-link {
+  width: fit-content !important;
+  border-bottom: 0px;
 }

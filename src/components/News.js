@@ -24,10 +24,11 @@ const News = (props)=> {
     url += `&apiKey=hidden&page=${page}&pageSize=${props.pageSize}`;
 
     let urlNew = `${process.env.REACT_APP_NEWS_URL}/translate/fetchnews?text=${url}`
+    // console.log(navigator.userAgent.indexOf("Firefox") != -1)
 
     setLoading(true);
     props.setProgress(10)
-    let newsData = await fetch(urlNew);
+    let newsData = await fetch(urlNew, { signal: AbortSignal.timeout(10000) });
     let parsedNewsData = await newsData.json();
     let status = parsedNewsData.status;
     props.setProgress(60)
@@ -42,14 +43,7 @@ const News = (props)=> {
     props.setProgress(100)
   }
 
-  const getEndMessage = () => {
-    // errorCode==="" 
-    // ? !loading && 
-    // (articles.length > 0 ? <p className="my-3" style={{ textAlign: 'center' }}>
-    //   <b>Yay! You have read all the news in {capitalizeFirstLetter(props.category)} category</b>
-    // </p> : <p></p>)
-    // : errorCode === "" && <h4 className="text-center pt-5">Something went wrong 😰 Please try again later...</h4>
-
+  const getScrollEndMessage = () => {
     if(errorCode==="" ) {
       if(!loading) {
         if(articles.length > 0) {
@@ -60,7 +54,7 @@ const News = (props)=> {
           )
         } else {
           return <p className="my-3" style={{ textAlign: 'center' }}>
-          <b>No News found in {capitalizeFirstLetter(props.category)} category</b>
+          <b>No News Articles Found!</b>
         </p>
         }
       }
@@ -94,8 +88,8 @@ const News = (props)=> {
     return (
       <>
         <h1 className="text-center my-4 mt-5 pt-4">
-          Today's Top Headlines -{" "}
-          {capitalizeFirstLetter(props.category)}
+          Top Headlines
+          {props.category.toUpperCase() !== 'GENERAL' ? " - "+capitalizeFirstLetter(props.category) : ''}
         </h1>
         {errorCode === "apiKeyExhausted" || errorCode === "rateLimited" ? <div className="my-4 text-center"><h2>Oops! Server requests limit has been exhausted. Please try after some time.</h2></div> : loading && <Spinner />}
         <InfiniteScroll
@@ -103,7 +97,7 @@ const News = (props)=> {
           next={fetchNewsData}
           hasMore={articles.length !== totalResults}
           loader={<Spinner />}
-          endMessage={getEndMessage()}
+          endMessage={getScrollEndMessage()}
         >
           <div className="container">
           <div className="row">
