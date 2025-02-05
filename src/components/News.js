@@ -64,7 +64,8 @@ const News = (props)=> {
   }
     
   useEffect(() => {
-    document.title = `NewsMurphy - ${capitalizeFirstLetter(props.category)}`;
+    let title = props.category === 'general' ? 'Home' : capitalizeFirstLetter(props.category)
+    document.title = `NewsMurphy - ${title}`;
     loadNews();
     // eslint-disable-next-line
   }, [])

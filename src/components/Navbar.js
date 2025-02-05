@@ -8,7 +8,7 @@ export default function Navbar() {
   //  console.log(location.pathname);
   // }, [location]);
 
-  const resetNav = () => {
+  const closeNav = () => {
     setTimeout(() => {
       let nav = document.getElementById('navbarSupportedContent')
       nav.setAttribute('class','collapse navbar-collapse')
@@ -41,49 +41,49 @@ export default function Navbar() {
           >
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
               <li className="nav-item nav-item-link" style={{border: 'none'}}
-                onClick={resetNav()}
+                onClick={closeNav()}
               >
                 <Link className={`nav-item nav-link ${location.pathname === "/"? "active border-bottom border-2": ""}`} style={{border: 'none'}} aria-current="page" to="/">
                   Home
                 </Link>
               </li>
               <li className="nav-item nav-item-link"
-                onClick={resetNav()}
+                onClick={closeNav()}
               >
                 <Link className={`nav-link ${location.pathname === "/business"? "active border-bottom border-2": ""}`} to="/business">
                   Business
                 </Link>
               </li>
               <li className="nav-item nav-item-link"
-                onClick={resetNav()}
+                onClick={closeNav()}
               >
                 <Link className={`nav-link ${location.pathname === "/health"? "active border-bottom border-2": ""}`} to="/health">
                   Health
                 </Link>
               </li>
               <li className="nav-item nav-item-link"
-                onClick={resetNav()}
+                onClick={closeNav()}
               >
                 <Link className={`nav-link ${location.pathname === "/entertainment"? "active border-bottom border-2": ""}`} to="/entertainment">
                   Entertainment
                 </Link>
               </li>
               <li className="nav-item nav-item-link"
-                onClick={resetNav()}
+                onClick={closeNav()}
               >
                 <Link className={`nav-link ${location.pathname === "/sports"? "active border-bottom border-2": ""}`} to="/sports">
                   Sports
                 </Link>
               </li>
               <li className="nav-item nav-item-link"
-                onClick={resetNav()}
+                onClick={closeNav()}
               >
                 <Link className={`nav-link ${location.pathname === "/science"? "active border-bottom border-2": ""}`} to="/science">
                   Science
                 </Link>
               </li>
               <li className="nav-item nav-item-link"
-                onClick={resetNav()}
+                onClick={closeNav()}
               >
                 <Link className={`nav-link ${location.pathname === "/technology"? "active border-bottom border-2": ""}`} to="/technology">
                   Technology
