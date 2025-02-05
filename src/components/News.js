@@ -44,12 +44,13 @@ const News = (props)=> {
   }
 
   const getScrollEndMessage = () => {
+    let category = props.category === 'general' ? '' : (" in " + capitalizeFirstLetter(props.category) + ' category');
     if(errorCode==="" ) {
       if(!loading) {
         if(articles.length > 0) {
           return (
             <p className="my-3" style={{ textAlign: 'center' }}>
-              <b>Yay! You have read all the news in {capitalizeFirstLetter(props.category)} category</b>
+              <b>Yay! You have read all the news{category}</b>
             </p>
           )
         } else {
