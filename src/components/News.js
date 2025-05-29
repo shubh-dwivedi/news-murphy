@@ -7,7 +7,6 @@ import axios from "axios";
 import loading from './loading-waiting.gif'
 
 const News = (props)=> {
-  
   const [articles, setArticles] = useState([])
   const [totalResults, setTotalResults] = useState(0)
   const [page, setPage] = useState(1)
@@ -18,35 +17,21 @@ const News = (props)=> {
     return str.charAt(0).toUpperCase() + str.slice(1);
   };
 
-  const loadNews = async (pageSize)=> {
+  const loadNews = async ()=> {
     // sample url for API - `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=hidden&page=${page}&pageSize=${pageSize}`;
     let url = process.env.REACT_APP_NEWS_API_URL;
     url += props.news_type ? `${props.news_type}?`:'top-headlines?';
     url += props.country ? `&country=${props.country}`:'';
     url += props.category ? `&category=${props.category}`:'';
-    url += `&apiKey=${process.env.REACT_APP_NEWS_API}`;
-    url += `&page=${page}&pageSize=${pageSize}`;
-    // console.log(navigator.userAgent.indexOf("Firefox") != -1)
+    // url += `&apiKey=${process.env.REACT_APP_NEWS_API}`;
+    url += `&apiKey=hidden`;
+    url += `&page=${page}&pageSize=${props.pageSize}`;
 
     setLoading(true);
-    // let urlNew = `${process.env.REACT_APP_NEWS_URL}/translate/fetchnews?text=${url}`
-    // props.setProgress(10)
-    // let newsData = await fetch(urlNew, { signal: AbortSignal.timeout(10000) });
-    // let parsedNewsData = await newsData.json();
-    // let status = parsedNewsData.status;
-    // props.setProgress(60)
-    // if (status === "ok") {
-    //     setArticles(parsedNewsData.articles);
-    //     setTotalResults(parsedNewsData.totalResults);
-    //     setLoading(false);
-    // } else {
-    //     setErrorCode(parsedNewsData);
-    //     setErrorCode(parsedNewsData.code);
-    //     setLoading(false);
-    // }
-    // props.setProgress(100)
+    let urlNew = `${process.env.REACT_APP_NEWS_URL}/translate/fetchnews?text=${url}`
+    props.setProgress(10)
 
-    let result = getNewsData(url);
+    let result = getNewsData(urlNew);
     if(result === 'API request limit exhausted') {
       url.replace(process.env.REACT_APP_NEWS_API, process.env.REACT_APP_NEWS_API_BACKUP)
     } else {
@@ -57,15 +42,15 @@ const News = (props)=> {
   const getNewsData = async(url) => {
     props.setProgress(10)
     axios
-      .get(url)
+      .get(url, {
+        timeout: 5000, // Set a timeout of 5 seconds
+      })
       .then(response => {
         props.setProgress(60)
-        // console.log(response.data)
         setLoading(false);
         if(response.data.status === 'ok') {
           setArticles(response.data.articles);
           setTotalResults(response.data.totalResults);
-          props.setProgress(100)
         } else {
           let error_code = response.data.code
           setErrorCode(error_code);
@@ -79,9 +64,17 @@ const News = (props)=> {
             return 'Failed'
           }
         }
+        props.setProgress(100)
         return 'Success'
       }).catch(error => {
-        console.log(error)
+        if (error.code === 'ECONNABORTED') {
+          console.log('Request timed out');
+          setTimeout(() => {
+            getNewsData(url)
+          }, 40000);
+        } else {
+          console.log(error.message);
+        }
         setLoading(false);
         props.setProgress(100)
         return 'Failed'
@@ -108,14 +101,7 @@ const News = (props)=> {
       return <h4 className="text-center pt-5">Something went wrong 😰 Please try again later...</h4>
     }
   }
-    
-  useEffect(() => {
-    let title = props.category === 'general' ? 'Home' : capitalizeFirstLetter(props.category)
-    document.title = `NewsMurphy - ${title}`;
 
-    loadNews(props.pageSize+1);
-    // eslint-disable-next-line
-  }, [])
   
   const fetchNewsData = async () => {
     var arrayNews;
@@ -124,33 +110,22 @@ const News = (props)=> {
     url += props.news_type ? `${props.news_type}?`:'top-headlines?';
     url += props.country ? `&country=${props.country}`:'';
     url += props.category ? `&category=${props.category}`:'';
-    url += `&apiKey=${process.env.REACT_APP_NEWS_API}`;
+    url += `&apiKey=hidden`;
     url += `&page=${1}&pageSize=${totalResults < 100 ? totalResults : 100}`;
 
     setLoading(true);
-    // let urlNew = `${process.env.REACT_APP_NEWS_URL}/translate/fetchnews?text=${url}`
-    // let newsData = await fetch(urlNew);
-    // let parsedNewsData = await newsData.json();
-    // console.log(parsedNewsData)
-    // arrayNews = parsedNewsData.articles;
-    // setTotalResults(arrayNews.length);
-    // let articlesLoaded = arrayNews.slice(pageSize);
-    
-    // setArticles(articles.concat(articlesLoaded));
-    // setPage(page+1);
-    // setLoading(false);
-
     props.setProgress(10)
+    let urlNew = `${process.env.REACT_APP_NEWS_URL}/translate/fetchnews?text=${url}`
+
     axios
-      .get(url)
+      .get(urlNew)
       .then(response => {
-        // console.log(response.data)
         props.setProgress(60)
         arrayNews = response.data.articles;
         setTotalResults(arrayNews.length);
-        let articlesLoaded = arrayNews.slice(props.pageSize);
+        let articlesLoaded = arrayNews.slice(articles.length);
         
-        setArticles(articles.concat(articlesLoaded));
+        setArticles(prevArticles => prevArticles.concat(articlesLoaded));
         setPage(page+1);
         setLoading(false);
         props.setProgress(100)
@@ -162,6 +137,14 @@ const News = (props)=> {
         props.setProgress(100)
       })
   };
+      
+  useEffect(() => {
+    let title = props.category === 'general' ? 'Home' : capitalizeFirstLetter(props.category)
+    document.title = `NewsMurphy - ${title}`;
+
+    loadNews();
+    // eslint-disable-next-line
+  }, [])
   
     return (
       <>
@@ -174,8 +157,12 @@ const News = (props)=> {
           <div className="my-4 text-center">
             <h2>Oops! API requests limit has been exhausted. Please try after some time.</h2>
           </div> : 
-          (loading && <Spinner />)
+          <div>
+            <h2>{errorCode}</h2>
+          </div>
         }
+
+        { loading && <Spinner />}
         
         <InfiniteScroll
           dataLength={articles.length}
