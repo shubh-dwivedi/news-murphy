@@ -140,7 +140,7 @@ const News = ({
     return news_header === "Everything" ? "All News" : news_header;
   };
 
-  const debounced = useDebounce(fetchInitialNewsArticles, 3000);
+  const debounced = useDebounce(fetchInitialNewsArticles, 1000);
 
   const handleSearch = (e) => {
     const search_value = e.target.value;
